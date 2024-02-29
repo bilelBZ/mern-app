@@ -2,14 +2,14 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
-const port = process.env.PORT || 3001;
-
+const port = 3001;
+const path = require('path')
 const app = express();
 
 app.use(express.json());
 app.use(cors());
 
-mongoose
+mongoose 
   .connect(process.env.MONGO_URI)
   .then(() => console.log("Database is connected..."))
   .catch((err) => console.log(err));
@@ -41,6 +41,12 @@ app.post("/create", (req, res) => {
     .then((user) => res.json(user))
     .catch((err) => console.log(err));
 });
+
+// production use
+app.use(express.static("./client/build"))
+app.use('*',(req,res)=>{
+  res.sendFile(path.resolve(__dirname,"client","build","index.html"))
+})
 
 app.listen(port, () => {
   console.log(`Server is running on post ${port}`);
